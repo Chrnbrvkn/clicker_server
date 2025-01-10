@@ -43,6 +43,11 @@ class AuthController {
   async login(req, res) {
     try {
       const { email, password } = req.body;
+      if (!email || !password) {
+        return res.status(400).json({
+          error: "Email and password are required",
+        });
+      }
 
       // Проверка существования пользователя
       const user = await Users.findOne({ where: { email } });
@@ -58,7 +63,7 @@ class AuthController {
 
       // Генерация токена
       const token = generateToken(user);
-      return res.json({ message: "Login successful", token });
+      return res.status(200).json({ message: "Login successful", token });
     } catch (e) {
       console.error(e);
       return res.status(500).json({ error: e.message || "Login error" });

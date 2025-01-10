@@ -21,10 +21,14 @@ const verifyToken = (req, res, next) => {
       return res.status(401).json({
         message: `Не удалось аутентифицировать токен. \n${err}`,
       });
+    } else {
+      return res
+        .status(200)
+        .json({ message: `Аутентификация прошла успешно!`, token });
     }
 
-    req.user = decoded;
-    next();
+    // req.user = decoded;
+    // next();
   });
 };
 
