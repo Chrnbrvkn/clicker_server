@@ -26,6 +26,11 @@ const start = async () => {
     console.log("Подключение к базе данных установлено.");
     await sequelize.sync({ force: true });
     console.log("Таблицы синхронизированы.");
+
+    // Метод app.listen для запуска сервера
+    app.listen(PORT, () => {
+      console.log(`Сервер запущен на порту ${PORT}`);
+    });
   } catch (e) {
     console.error("Ошибка подключения к базе данных:", e);
     throw e;
@@ -33,5 +38,6 @@ const start = async () => {
 };
 
 start();
+
 
 module.exports = app;
