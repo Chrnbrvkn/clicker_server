@@ -1,26 +1,21 @@
+// routes/index.js
 const Router = require("express");
 const router = new Router();
 const { verifyToken } = require("../utils/verifyToken");
 const authController = require("../controllers/auth.controller");
+const settingsController = require("../controllers/settings.controller");
 
-const { Users } = require("../db/models/user.model");
-
-// auth
+// Auth routes
 router.post("/registration", authController.registration);
 router.post("/login", authController.login);
-router.get("/validate-token", verifyToken);
+router.get("/validate-token", verifyToken, authController.validateToken);
+router.get("/users-list", verifyToken, authController.getUsers);
 
-router.get("/users-list", async (req, res) => {
-  try {
-    const users = await Users.findAll();
-    if (users.length > 0) {
-      return res.json({ data: users, status: 200 });
-    } else {
-      return res.json({ data: [], status: 200 });
-    }
-  } catch (e) {
-    return res.json({ message: e.message || "Users not found", status: 500 });
-  }
-});
+// Settings routes
+router.get("/settings", verifyToken, settingsController.getSettings);
+router.post("/settings", verifyToken, settingsController.updateSettings);
+
+// SSE endpoint
+router.get("/events", verifyToken, settingsController.handleSSE);
 
 module.exports = router;

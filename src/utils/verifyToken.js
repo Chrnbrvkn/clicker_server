@@ -4,31 +4,25 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const verifyToken = (req, res, next) => {
   let token = req.headers['authorization'];
 
+  // Извлечение токена из заголовка
   if (token && token.startsWith('Bearer ')) {
     token = token.slice(7, token.length);
   }
 
-  console.log('VERIFY TOKEN: ' + token);
-
+  // Если токен отсутствует
   if (!token) {
-    return res.status(403).json({
-      message: `Forbidden!`,
-    });
+    return res.status(403).json({ error: "Authorization token required" });
   }
 
+  // Верификация токена
   jwt.verify(token, JWT_SECRET, (err, decoded) => {
     if (err) {
-      return res.status(401).json({
-        message: `Не удалось аутентифицировать токен. \n${err}`,
-      });
-    } else {
-      return res
-        .status(200)
-        .json({ message: `Аутентификация прошла успешно!`, token });
+      return res.status(401).json({ error: "Invalid or expired token" });
     }
 
-    // req.user = decoded;
-    // next();
+    // Добавляем данные пользователя в запрос
+    req.user = decoded;
+    next(); // Переходим к следующему middleware/обработчику
   });
 };
 

@@ -1,25 +1,38 @@
+
+
 require("dotenv").config();
+
 const express = require("express");
 const sequelize = require("./db");
 const router = require("./routes");
 
 const PORT = process.env.PORT || 8080;
-
-// Инициализация приложения
 const app = express();
 
-// Middleware для обработки JSON
+// Middleware
 app.use(express.json());
+
+// CORS
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", process.env.CLIENT_ORIGIN || "*");
+  res.header("Access-Control-Allow-Headers", "Authorization, Content-Type");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+  
+  next();
+});
 
 app.use("/api", router);
 
-// Middleware для обработки ошибок
+// Обработка ошибок
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: err.message || "Internal server error" });
 });
 
-// Запуск сервера
 const start = async () => {
   try {
     await sequelize.authenticate();
@@ -27,17 +40,13 @@ const start = async () => {
     await sequelize.sync({ force: true });
     console.log("Таблицы синхронизированы.");
 
-    // Метод app.listen для запуска сервера
     app.listen(PORT, () => {
       console.log(`Сервер запущен на порту ${PORT}`);
     });
   } catch (e) {
     console.error("Ошибка подключения к базе данных:", e);
-    throw e;
+    process.exit(1);
   }
 };
 
 start();
-
-
-module.exports = app;

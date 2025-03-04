@@ -69,6 +69,37 @@ class AuthController {
       return res.status(500).json({ error: e.message || "Login error" });
     }
   }
+
+  async validateToken(req, res) {
+    try {
+      res.status(200).json({
+        valid: true,
+        user: {
+          id: req.user.userId,
+          email: req.user.email,
+        },
+      });
+    } catch (e) {
+      res.status(500).json({ error: "Token validation failed" });
+    }
+  }
+
+  async getUsers(req, res) {
+    try {
+      const users = await Users.findAll({
+        attributes: { exclude: ["password"] },
+      });
+      console.log(JSON.stringify(users, null, 2));
+
+      if (users.length > 0) {
+        return res.status(200).json({ data: users });
+      } else {
+        return res.status(200).json({ data: [] });
+      }
+    } catch (e) {
+      return res.status(500).json({ message: e.message || "Users not found" });
+    }
+  }
 }
 
 module.exports = new AuthController();

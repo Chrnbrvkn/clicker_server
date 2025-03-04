@@ -12,6 +12,15 @@ const Users = sequelize.define(
       validate: { notEmpty: true },
     },
     password: { type: DataTypes.STRING, allowNull: false },
+    action: { type: DataTypes.STRING, defaultValue: "none" },
+    clickRate: { type: DataTypes.INTEGER, defaultValue: 0 },
+    coordinate_x: { type: DataTypes.INTEGER, defaultValue: 0 },
+    coordinate_y: { type: DataTypes.INTEGER, defaultValue: 0 },
+    match_names: { type: DataTypes.STRING, defaultValue: null },
+    settings_updated_at: { 
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW
+    }
   },
   { paranoid: true }
 );
