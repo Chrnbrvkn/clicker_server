@@ -25,14 +25,16 @@ class SettingsController {
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
-
+  
+    console.log(`Client connected: ${userId}`);
     sseClients.addClient(userId, res);
-
+  
     const heartbeat = setInterval(() => {
       res.write(":heartbeat\n\n");
     }, 30000);
-
+  
     req.on("close", () => {
+      console.log(`Client disconnected: ${userId}`);
       clearInterval(heartbeat);
       sseClients.removeClient(userId, res);
     });
