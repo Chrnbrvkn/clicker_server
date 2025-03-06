@@ -16,6 +16,6 @@ router.get("/settings", verifyToken, settingsController.getSettings);
 router.post("/settings", verifyToken, settingsController.updateSettings);
 
 // SSE endpoint
-router.get("/events:token", verifyToken, settingsController.handleSSE);
+router.get("/events", verifyToken, settingsController.handleSSE);
 
 module.exports = router;
