@@ -1,11 +1,11 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET;
 
 const verifyToken = (req, res, next) => {
-  let token = req.headers['authorization'] || req.query.token;
+  let token = req.query.token || req.headers["authorization"];
 
   // Извлечение токена из заголовка
-  if (token && token.startsWith('Bearer ')) {
+  if (token && token.startsWith("Bearer ")) {
     token = token.slice(7, token.length);
   }
 
