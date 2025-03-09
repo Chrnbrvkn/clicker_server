@@ -14,7 +14,7 @@ class SettingsController {
         match_names: user.match_names,
         step_pari: user.step_pari,
         settings_updated_at: user.settings_updated_at,
-        created_at: user.created_at,
+        created_at: user.createdAt,
       });
     } catch (e) {
       res.status(500).json({ error: "Failed to get settings" });
@@ -44,47 +44,57 @@ class SettingsController {
 
   async updateSettings(req, res) {
     try {
-      const [updated] = await Users.update(
+      const userId = req.user.userId;
+
+      // Проверяем, существует ли пользователь
+      const user = await Users.findByPk(userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      // Обновляем данные
+      await Users.update(
         {
           ...req.body,
           settings_updated_at: new Date(),
         },
-        { where: { id: req.user.userId } }
+        { where: { id: userId } }
       );
 
-      if (!updated) {
-        return res.status(400).json({ error: "No changes detected" });
-      }
+      // Получаем обновленного пользователя
+      const updatedUser = await Users.findByPk(userId);
 
-      const userId = req.user.userId.toString();
-      const user = await Users.findByPk(userId);
-
+      // Отправляем обновленные данные через SSE
       const settingsData = JSON.stringify({
-        action: user.action,
-        clickRate: user.clickRate,
-        coordinate_x: user.coordinate_x,
-        coordinate_y: user.coordinate_y,
-        match_names: user.match_names,
-        updatedAt: user.settings_updated_at,
+        action: updatedUser.action,
+        click_rate: updatedUser.click_rate,
+        coordinate_x: updatedUser.coordinate_x,
+        coordinate_y: updatedUser.coordinate_y,
+        match_names: updatedUser.match_names,
+        step_pari: updatedUser.step_pari,
+        updatedAt: updatedUser.settings_updated_at,
       });
 
       sseClients.broadcast(
-        userId,
+        userId.toString(),
         `event: settings_update\ndata: ${settingsData}\n\n`
       );
 
+      // Возвращаем обновленные настройки
       res.status(200).json({
         message: "Settings updated",
         settings: {
-          action: user.action,
-          clickRate: user.clickRate,
-          coordinate_x: user.coordinate_x,
-          coordinate_y: user.coordinate_y,
-          match_names: user.match_names,
-          updatedAt: user.settings_updated_at,
+          action: updatedUser.action,
+          click_rate: updatedUser.click_rate,
+          coordinate_x: updatedUser.coordinate_x,
+          coordinate_y: updatedUser.coordinate_y,
+          match_names: updatedUser.match_names,
+          step_pari: updatedUser.step_pari,
+          updatedAt: updatedUser.settings_updated_at,
         },
       });
     } catch (e) {
+      console.error(e);
       res.status(500).json({ error: "Failed to update settings" });
     }
   }
