@@ -13,7 +13,7 @@ const Users = sequelize.define(
     },
     password: { type: DataTypes.STRING, allowNull: false },
     action: { type: DataTypes.STRING, defaultValue: "none" },
-    clickRate: { type: DataTypes.INTEGER, defaultValue: 0 },
+    click_rate: { type: DataTypes.INTEGER, defaultValue: 0 },
     coordinate_x: { type: DataTypes.INTEGER, defaultValue: 0 },
     coordinate_y: { type: DataTypes.INTEGER, defaultValue: 0 },
     match_names: { type: DataTypes.STRING, defaultValue: null },
