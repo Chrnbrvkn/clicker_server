@@ -1,8 +1,9 @@
 require("dotenv").config();
 
 const express = require("express");
-const sequelize = require("./db");
+const sequelize = require("./db/db");
 const router = require("./routes");
+const { Users } = require("./db/models/user.model");
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -15,11 +16,11 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", process.env.CLIENT_ORIGIN || "*");
   res.header("Access-Control-Allow-Headers", "Authorization, Content-Type");
   res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  
+
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
-  
+
   next();
 });
 
@@ -38,6 +39,8 @@ const start = async () => {
     await sequelize.sync({ force: true });
     console.log("Таблицы синхронизированы.");
 
+    await Users.sync({ force: true });
+    
     app.listen(PORT, () => {
       console.log(`Сервер запущен на порту ${PORT}`);
     });
