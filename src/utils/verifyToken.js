@@ -22,7 +22,7 @@ const verifyToken = (req, res, next) => {
 
     // Добавляем данные пользователя в запрос
     req.user = decoded;
-    next(); // Переходим к следующему middleware/обработчику
+    next();
   });
 };
 
