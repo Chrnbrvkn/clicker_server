@@ -9,8 +9,7 @@ class SettingsController {
       res.status(200).json({
         action: user.action,
         click_rate: user.click_rate,
-        coordinate_x: user.coordinate_x,
-        coordinate_y: user.coordinate_y,
+        element: user.element,
         match_names: user.match_names,
         step_pari: user.step_pari,
         settings_updated_at: user.settings_updated_at,
@@ -68,8 +67,7 @@ class SettingsController {
       const settingsData = JSON.stringify({
         action: updatedUser.action,
         click_rate: updatedUser.click_rate,
-        coordinate_x: updatedUser.coordinate_x,
-        coordinate_y: updatedUser.coordinate_y,
+        element: updatedUser.element,
         match_names: updatedUser.match_names,
         step_pari: updatedUser.step_pari,
         updatedAt: updatedUser.settings_updated_at,
@@ -86,8 +84,7 @@ class SettingsController {
         settings: {
           action: updatedUser.action,
           click_rate: updatedUser.click_rate,
-          coordinate_x: updatedUser.coordinate_x,
-          coordinate_y: updatedUser.coordinate_y,
+          element: updatedUser.element,
           match_names: updatedUser.match_names,
           step_pari: updatedUser.step_pari,
           updatedAt: updatedUser.settings_updated_at,
