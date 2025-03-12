@@ -6,7 +6,7 @@ const authController = require("../controllers/auth.controller");
 const settingsController = require("../controllers/settings.controller");
 
 // Auth routes
-router.post("/registration", verifyToken, authController.registration);
+router.post("/registration", authController.registration);
 router.post("/login", authController.login);
 router.get("/validate-token", verifyToken, authController.validateToken);
 router.get("/users-list", verifyToken, authController.getUsers);

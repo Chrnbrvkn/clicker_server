@@ -7,45 +7,43 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "";
 class AuthController {
   // Регистрация нового пользователя
   async registration(req, res) {
-    if (req.user.email && req.user.email === ADMIN_EMAIL) {
-      try {
-        const { email, password } = req.body;
-        if (!email || !password) {
-          return res.status(400).json({
-            error: `Email and password are required.
+    // if (req.user.email && req.user.email === ADMIN_EMAIL) {
+    try {
+      const { email, password } = req.body;
+      if (!email || !password) {
+        return res.status(400).json({
+          error: `Email and password are required.
             \nemail: ${email}
             \npassword: ${password}`,
-          });
-        }
-
-        // Проверка существования пользователя с таким email
-        const existingUser = await Users.findOne({ where: { email } });
-        if (existingUser) {
-          return res
-            .status(400)
-            .json({ error: "User with this email already exists" });
-        }
-
-        // Хеширование пароля и создание пользователя
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = await Users.create({ email, password: hashedPassword });
-
-        // Генерация токена
-        const token = generateToken(user);
-        return res
-          .status(201)
-          .json({ message: "User registered successfully", token });
-      } catch (e) {
-        console.error(e);
-        return res
-          .status(500)
-          .json({ error: e.message || "Registration error" });
+        });
       }
-    } else {
+
+      // Проверка существования пользователя с таким email
+      const existingUser = await Users.findOne({ where: { email } });
+      if (existingUser) {
+        return res
+          .status(400)
+          .json({ error: "User with this email already exists" });
+      }
+
+      // Хеширование пароля и создание пользователя
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = await Users.create({ email, password: hashedPassword });
+
+      // Генерация токена
+      const token = generateToken(user);
       return res
-        .status(403)
-        .json({ error: "You dont have access to this endpoint" });
+        .status(201)
+        .json({ message: "User registered successfully", token });
+    } catch (e) {
+      console.error(e);
+      return res.status(500).json({ error: e.message || "Registration error" });
     }
+    // } else {
+    //   return res
+    //     .status(403)
+    //     .json({ error: "You dont have access to this endpoint" });
+    // }
   }
 
   // Логин пользователя
