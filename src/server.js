@@ -36,10 +36,8 @@ const start = async () => {
   try {
     await sequelize.authenticate();
     console.log("Подключение к базе данных установлено.");
-    await sequelize.sync({ force: true });
+    await sequelize.sync();
     console.log("Таблицы синхронизированы.");
-
-    await Users.sync({ force: true });
     
     app.listen(PORT, () => {
       console.log(`Сервер запущен на порту ${PORT}`);

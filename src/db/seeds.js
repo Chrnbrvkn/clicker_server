@@ -2,7 +2,10 @@ require("dotenv").config();
 
 const bcrypt = require("bcrypt");
 const { Users } = require("./models/user.model");
-const sequelize = require(".");
+const sequelize = require("./db");
+
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
 
 const seedUsers = async () => {
   try {
@@ -32,4 +35,18 @@ const seedUsers = async () => {
   }
 };
 
-seedUsers();
+const createMainAdmin = async () => {
+  try {
+    // Хешируем пароль главного администратора
+    const hashedMainAdmin = await bcrypt.hash(ADMIN_PASSWORD, 10);
+
+    // Создаем главного администратора
+    await sequelize.sync({ alter: true });
+    await Users.create({ email: ADMIN_EMAIL, password: hashedMainAdmin });
+  } catch (e) {
+    console.error("Ошибка при создании главного администратора: ", e);
+  }
+};
+
+// seedUsers();
+createMainAdmin();
