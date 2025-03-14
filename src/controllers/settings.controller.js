@@ -44,7 +44,22 @@ class SettingsController {
   async getConnectedClients(req, res) {
     try {
       const clients = sseClients.getClients();
-      res.json(clients);
+      const connectedUsers = [];
+  
+      for (const [userId, clientSet] of clients.entries()) {
+        const user = await Users.findByPk(userId, {
+          attributes: { exclude: ["password"] },
+        });
+        if (user) {
+          connectedUsers.push({
+            userId: user.id,
+            email: user.email,
+            devices: Array.from(clientSet).length,
+          });
+        }
+      }
+  
+      res.json(connectedUsers);
     } catch (e) {
       console.error(e);
       res.status(500).json({ error: "Failed to get connected clients" });

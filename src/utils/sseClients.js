@@ -29,7 +29,7 @@ class SSEClients {
   }
 
   getClients() {
-    return [...this.clients.keys()];
+    return this.clients;
   }
 }
 

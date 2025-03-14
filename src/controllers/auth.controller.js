@@ -114,7 +114,11 @@ class AuthController {
 
   async deleteUser(req, res) {
     try {
-      const userId = parseInt(req.params.userId);
+      const userId = parseInt(req.query.userId);
+      if (isNaN(userId)) {
+        return res.status(400).json({ error: `Invalid user ID: ${userId}` });
+      }
+
       const user = await Users.findByPk(userId);
 
       if (!user) {
