@@ -41,6 +41,16 @@ class SettingsController {
     });
   }
 
+  async getConnectedClients(req, res) {
+    try {
+      const clients = sseClients.getClients();
+      res.json(clients);
+    } catch (e) {
+      console.error(e);
+      res.status(500).json({ error: "Failed to get connected clients" });
+    }
+  }
+
   async updateSettings(req, res) {
     try {
       const userId = req.user.userId;
